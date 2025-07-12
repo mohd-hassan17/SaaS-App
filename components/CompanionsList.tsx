@@ -2,61 +2,86 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { cn } from "@/lib/utils";
+import { cn, getSubjectColor } from "@/lib/utils";
+import Image from "next/image";
+import Link from "next/link";
 
-
-const invoices = [
-  {
-    invoice: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    paymentMethod: "Credit Card",
-  },
-]
 
 interface CompanionsListProps {
-    title: string;
-    companions?: Companion[];
-    classNames?: string;
+  title: string;
+  companions?: Companion[];
+  classNames?: string;
 }
 
-const CompanionList = ({title, companions, classNames}: CompanionsListProps) => {
+const CompanionList = ({ title, companions, classNames }: CompanionsListProps) => {
   return (
     <article className={cn('companion-list', classNames)}>
-          <h2 className="font-bold text-3xl">Recent Session</h2>
-          <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[100px]">Invoice</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Method</TableHead>
-          <TableHead className="text-right">Amount</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        
-          <TableRow >
-            <TableCell className="font-medium">invoice</TableCell>
-            <TableCell>paymentStatus</TableCell>
-            <TableCell>paymentMethod</TableCell>
-            <TableCell className="text-right">totalAmount</TableCell>
+      <h2 className="font-bold text-2xl">Recent Session</h2>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-lg w-2/3">Lessons</TableHead>
+            <TableHead className="text-lg">Subject</TableHead>
+            <TableHead className="text-lg text-right">Duration</TableHead>
           </TableRow>
-       
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {companions?.map(({ id, subject, name, topic, duration, color }) => (
+            <TableRow key={id}>
+              <TableCell>
+                <Link href={`/companions/${id}`}>
+                  <div className="flex items-center gap-2">
+                    <div className="size-[72px] flex items-center justify-center rounded-lg max-md:hidden" style={{backgroundColor: getSubjectColor(subject)}}>
+                      <Image
+                        src={`/icons/${subject}.svg`}
+                        alt={subject}
+                        width={30}
+                        height={30} />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <p className="font-bold text-xl">
+                        {name}
+                      </p>
+                      <p className="text-base">
+                        {topic}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              </TableCell>
+
+                  <TableCell>
+                                <div className="subject-badge w-fit max-md:hidden">
+                                    {subject}
+                                </div>
+                                <div className="flex items-center justify-center rounded-lg w-fit p-2 md:hidden" style={{backgroundColor: getSubjectColor(subject)}}>
+                            <Image
+                                src={`/icons/${subject}.svg`}
+                                alt={subject}
+                                width={18}
+                                height={18}
+                            />
+                                </div>
+                            </TableCell>
+                            <TableCell>
+                                <div className="flex items-center gap-2 w-full justify-end">
+                                    <p className="text-lg">
+                                        {duration} {' '}
+                                        <span className="max-md:hidden">mins</span>
+                                    </p>
+                                    <Image src="/icons/clock.svg" alt="minutes" width={14} height={14} className="md:hidden" />
+                                </div>
+                            </TableCell>
+
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </article>
   )
 }
