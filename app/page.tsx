@@ -2,50 +2,41 @@ import React from 'react'
 import CompanionCard from '@/components/CompanionCard'
 import CompanionList from '@/components/CompanionsList'
 import Cta from '@/components/CTA'
-import {recentSessions} from "@/constants";
+import { recentSessions, subjects } from "@/constants";
+import { getAllCompanions, getRecentSessions } from '@/lib/actions/companion.actions';
+import { getSubjectColor } from '@/lib/utils';
 
 
-const Page = () => {
+const Page = async () => {
+
+  const companions = await getAllCompanions({ limit: 3 });
+  const recentSessionsCompanions = await getRecentSessions(10);
+
+
   return (
     <main >
       <h1 className='text-2xl underline'>
-          Welcome to my saas app
+        ✨Smarter than your group chat, chiller than your teacher. Learn with voice✨.
       </h1>
       <section className='home-section'>
-          <CompanionCard 
-          id='123'
-          name='Neural Network of the Brain'
-          topic='Neura the Brainy Explorer'
-          subject='science'
-          duration={45}
-          color='#ffda6e'
+
+        {companions.map((companion) => (
+          <CompanionCard
+            key={companion.id}
+            {...companion}
+            color={getSubjectColor(companion.subject)}
           />
-          <CompanionCard 
-          id='321'
-          name='lets count number'
-          topic='Count Number'
-          subject='maths'
-          duration={45}
-          color='#efd0ff'
-          />
-          <CompanionCard 
-          id='456'
-          name='lets count number'
-          topic='Count Number'
-          subject='english'
-          duration={45}
-          color='#FADADD'
-          />
-         
+        ))}
+
       </section>
       <section className='home-section'>
-          <CompanionList 
-             title="Recently completed sessions"
-                companions={recentSessions}
-                classNames="w-2/3 max-lg:w-full"
-          />
+        <CompanionList
+          title="Recently completed sessions"
+          companions={recentSessionsCompanions}
+          classNames="w-2/3 max-lg:w-full"
+        />
 
-          <Cta />
+        <Cta />
       </section>
     </main>
   )

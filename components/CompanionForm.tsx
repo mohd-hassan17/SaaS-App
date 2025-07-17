@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { Loader } from 'lucide-react';
 
 import { Button } from "@/components/ui/button"
 import {
@@ -25,7 +26,10 @@ import {
 import { subjects } from "@/constants";
 import { Textarea } from "./ui/textarea";
 import { createCompanion } from "@/lib/actions/companion.actions";
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
+import { useRouter } from 'next/navigation';
+
+import { useState } from "react";
 
 const formSchema = z.object({
     name: z.string().min(1, { message: 'Companion is required.' }),
@@ -38,6 +42,10 @@ const formSchema = z.object({
 
 
 const CompanionForm = () => {
+
+    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
+
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -53,17 +61,23 @@ const CompanionForm = () => {
 
     // 2. Define a submit handler.
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        setIsLoading(true); // Start loading
 
-        const companion = await createCompanion(values);
+        try {
+            const companion = await createCompanion(values);
 
-        console.log(values);
-        if (companion) {
-            redirect('/companions/${companion.id}')
-        } else {
-            console.log('Failed to create companion');
-            redirect('/');
+            if (companion) {
+                router.push(`/companions/${companion.id}`); // ✅ use backticks
+            } else {
+                console.log("Failed to create companion");
+                router.push("/");
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false); // Stop loading
         }
-    }
+    };
 
     return (
         <Form {...form}>
@@ -209,8 +223,8 @@ const CompanionForm = () => {
                                 <Input
                                     type="number"
                                     {...field}
-                                    value={3}          // force value
-                                    disabled           // prevent editing
+                                    value={3}
+                                    disabled
                                     className="input opacity-50 cursor-not-allowed"
                                 />
                             </FormControl>
@@ -219,7 +233,15 @@ const CompanionForm = () => {
                     )}
                 />
 
-                <Button type="submit" className="w-full cursor-pointer">Build Your Companion</Button>
+                <Button type="submit" disabled={isLoading} className="w-full">
+                    {isLoading ? (
+                        <>
+                            <Loader className="mr-2 h-4 w-4 animate-spin" /> Building...
+                        </>
+                    ) : (
+                        "Build Your Companion"
+                    )}
+                </Button>
             </form>
         </Form>
     )
