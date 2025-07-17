@@ -2,10 +2,10 @@ import React from 'react'
 import CompanionCard from '@/components/CompanionCard'
 import CompanionList from '@/components/CompanionsList'
 import Cta from '@/components/CTA'
-import { recentSessions, subjects } from "@/constants";
 import { getAllCompanions, getRecentSessions } from '@/lib/actions/companion.actions';
 import { getSubjectColor } from '@/lib/utils';
 
+export const dynamic = "force-dynamic"; // <-- Add this
 
 const Page = async () => {
 
