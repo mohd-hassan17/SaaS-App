@@ -4,7 +4,7 @@ Converso is an AI-powered voice assistant designed to make learning more interac
 
 ## 🚀 Live Demo
 
-🔗 **Live URL:** [[Add Live Demo Link](https://converso-virid.vercel.app/)]
+🔗 **Live URL:** [[Live Demo Link](https://converso-virid.vercel.app/)]
 
 ## ✨ Features
 
